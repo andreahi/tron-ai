@@ -1,4 +1,4 @@
 sklearn
-tensorflow-gpu==1.12.2
+tensorflow-gpu==1.13.1
 redis
 freegames
