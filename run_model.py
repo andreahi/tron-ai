@@ -35,10 +35,11 @@ while True:
         #print([op.values() for op in graph.get_operations()])
         while True:
             state = r.get('state')
+            r.delete("state")
+
             if not state:
                 time.sleep(.001)
                 continue
-            r.delete("state")
             data = json.loads(state.decode('utf-8'))
             x = data["otherBody"]
             individual_values = data["myHead"]
