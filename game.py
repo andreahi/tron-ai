@@ -60,7 +60,7 @@ def do_smart_action(paim, otherBodyVector, myBodyVectors, myHead, player):
     rand_action = None
     while not rand_action:
         rand_action = r.get("action")
-        print(rand_action)
+        r.delete("action")
         if not rand_action:
             time.sleep(.01)
         else:
