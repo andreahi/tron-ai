@@ -58,7 +58,7 @@ def do_smart_action(paim, otherBodyVector, myBodyVectors, myHead, player):
     r.set('state', json.dumps({"myHead": [myHead.x/100, myHead.y/100],"otherBody": otherBody.tolist()}))
 
     rand_action = None
-    while rand_action == None:
+    while not rand_action:
         rand_action = r.get("action")
         if not rand_action:
             time.sleep(.01)
