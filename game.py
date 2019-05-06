@@ -63,7 +63,7 @@ def do_smart_action(paim, otherBodyVector, myBodyVectors, myHead, player):
         if not rand_action:
             time.sleep(.01)
         else:
-            rand_action = json.loads(rand_action)
+            rand_action = json.loads(rand_action.decode('utf-8'))
             rand_action = np.argmax(rand_action)
 
     np.argmax(rand_action)

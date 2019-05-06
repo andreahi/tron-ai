@@ -2,9 +2,6 @@ import numpy as np
 import redis
 import json
 
-r = redis.Redis(host='localhost', port=6379, db=0)
-
-
 import json
 import os
 import shutil
@@ -237,7 +234,7 @@ with tf.Session() as sess:
         '''
         new_data = r.get('sample1')
         if new_data:
-            data = json.loads(new_data)
+            data = json.loads(new_data.decode('utf-8'))
             #print(r.get('data'))
 
             r.delete("sample1")
@@ -306,7 +303,7 @@ with tf.Session() as sess:
 
         shuffle_in_unison(next_x_train, next_individual_values_train, x_train, individual_values_train, reward_train, actions_train)
 
-        for _ in range(100):
+        for _ in range(10):
             for i in range(0, 100000, step):
                 if i + step > len(x_train):
                     break
@@ -361,6 +358,12 @@ with tf.Session() as sess:
                     outputs={"action_pred": action_pred, "reward_pred": reward_pred})
         save_path = saver.save(sess, "model_tmp/model.ckpt")
         r.flushall()
+        x_train = []
+        reward_train = []
+        actions_train = []
+        individual_values_train = []
+        next_x_train = []
+        next_individual_values_train = []
         #action_pred_v = sess.run(
         #    [action_pred],
         #    feed_dict={food: x_train, individual_values: individual_values_train, keep_prob: 1.0})
