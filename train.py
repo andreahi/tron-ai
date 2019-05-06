@@ -298,7 +298,7 @@ with tf.Session() as sess:
         step = 10000
 
         if step > len(x_train):
-            time.sleep(1)
+            time.sleep(0.1)
             continue
 
         shuffle_in_unison(next_x_train, next_individual_values_train, x_train, individual_values_train, reward_train, actions_train)
