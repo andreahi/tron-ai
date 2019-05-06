@@ -233,11 +233,15 @@ with tf.Session() as sess:
 
         '''
         new_data = r.get('sample1')
+        r.delete("sample1")
+
+        if not new_data:
+            new_data = r.get('sample2')
+            r.delete("sample2")
         if new_data:
             data = json.loads(new_data.decode('utf-8'))
             #print(r.get('data'))
 
-            r.delete("sample1")
 
             if not data["myBody"]:
                 print("Got empty dataset :s ")
