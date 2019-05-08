@@ -55,19 +55,18 @@ def do_smart_action(paim, otherBodyVector, myBodyVectors, myHead, player):
 
 
 
-    r.set('state', json.dumps({"myHead": [myHead.x/100, myHead.y/100],"otherBody": otherBody.tolist()}))
-
+    randint = str(random.randint(0, 100000000))
+    r.set(randint, json.dumps({"myHead": [myHead.x/100, myHead.y/100],"otherBody": otherBody.tolist()}))
+    r.rpush("jobs", randint)
     rand_action = None
-    while not rand_action:
-        rand_action = r.get("action")
-        r.delete("action")
+    while rand_action is None:
+        rand_action = r.get("completed:" + str(randint))
         if not rand_action:
             time.sleep(.01)
         else:
+            r.delete("completed:" + randint)
             rand_action = json.loads(rand_action.decode('utf-8'))
             rand_action = np.argmax(rand_action)
-
-    np.argmax(rand_action)
     action = [0, 0, 0, 0, 0]
     action[rand_action] = 1
 
@@ -113,7 +112,7 @@ def draw():
     p2head = p2xy.copy()
 
     if not inside(p1head) or p1head in p2body:
-        print('Player blue wins!')
+        print('Player blue wins! ' + str(len(p2body)))
         r.set("sample1", json.dumps(
             {"myBody": p1MyBodies, "otherBody": p1OtherBodies, "action": p1Actions, "myHead": p1MyHeads,
              "winner": False}))
@@ -125,7 +124,7 @@ def draw():
         return
 
     if not inside(p2head) or p2head in p1body:
-        print('Player red wins!')
+        print('Player red wins! ' + str(len(p1body)))
         r.set("sample1", json.dumps(
             {"myBody": p1MyBodies, "otherBody": p1OtherBodies, "action": p1Actions, "myHead": p1MyHeads,
              "winner": True}))

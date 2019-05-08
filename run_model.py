@@ -34,12 +34,14 @@ while True:
 
         #print([op.values() for op in graph.get_operations()])
         while True:
-            state = r.get('state')
-            r.delete("state")
-
-            if not state:
+            job_number = r.lpop('jobs')
+            if not job_number:
                 time.sleep(.001)
                 continue
+            job_number = str(json.loads(job_number))
+            print(job_number)
+            state = r.get(job_number)
+            r.delete(job_number)
             data = json.loads(state.decode('utf-8'))
             x = data["otherBody"]
             individual_values = data["myHead"]
@@ -57,11 +59,11 @@ while True:
             else:
                 actions = [random.randint(0, 10), random.randint(0, 10), random.randint(0, 10), random.randint(0, 10), random.randint(0, 10)]
 
-            r.set("action", json.dumps(actions))
+            r.set("completed:" + job_number, json.dumps(actions))
 
 
             if (datetime.datetime.now() - last_reload).seconds > 200 and os.path.isdir('model'):
                     break
 
 
-            #print(actions)
+            print(actions)
