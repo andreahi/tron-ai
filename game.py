@@ -57,7 +57,7 @@ def do_smart_action(paim, otherBodyVector, myBodyVectors, myHead, player):
 
 
     randint = str(random.randint(0, 100000000))
-    r.set(randint, json.dumps({"myHead": [myHead.x/100, myHead.y/100],"otherBody": otherBody.tolist()}))
+    r.set(randint, json.dumps({"myHead": [myHead.x/100, myHead.y/100],"otherBody": otherBody[::4,::4].tolist()}))
     r.rpush("jobs", randint)
     rand_action = None
     while rand_action is None:
