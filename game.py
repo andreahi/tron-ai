@@ -6,6 +6,7 @@ import redis
 import json
 import time
 
+use_graphics = False
 
 p1xy = vector(-100, 0)
 p1aim = vector(4, 0)
@@ -137,24 +138,27 @@ def draw():
     p1body.add(p1head)
     p2body.add(p2head)
 
-    #square(p1xy.x, p1xy.y, 3, 'red')
-    #square(p2xy.x, p2xy.y, 3, 'blue')
-    #update()
+    if use_graphics:
+        square(p1xy.x, p1xy.y, 3, 'red')
+        square(p2xy.x, p2xy.y, 3, 'blue')
+        update()
 
-    #ontimer(draw, 50)
+        ontimer(draw, 50)
 
     p1aim = do_smart_action(p1aim, p1body, p2body, p1head, 'p1')
     p2aim = do_smart_action(p2aim, p2body, p1body, p2head, 'p2')
 
-    draw()
+    if not use_graphics:
+        draw()
 
     # p1aim = do_random_action(p1aim)
     # p2aim = do_random_action(p2aim)
 
+if use_graphics:
+    setup(420, 420, 370, 0)
+    hideturtle()
+    tracer(False)
+    listen()
 
-#setup(420, 420, 370, 0)
-#hideturtle()
-#tracer(False)
-#listen()
 draw()
 done()

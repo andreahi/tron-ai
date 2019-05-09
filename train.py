@@ -299,7 +299,7 @@ with tf.Session() as sess:
 
         print("dataset size: ", len(x_train))
 
-        step = 1000
+        step = 10000
 
         if step > len(x_train):
             time.sleep(0.1)
@@ -361,7 +361,7 @@ with tf.Session() as sess:
                     inputs={"input": food},
                     outputs={"action_pred": action_pred, "reward_pred": reward_pred})
         save_path = saver.save(sess, "model_tmp/model.ckpt")
-        r.flushall()
+        #r.flushall()
         x_train = []
         reward_train = []
         actions_train = []
