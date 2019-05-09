@@ -74,13 +74,13 @@ def do_smart_action(paim, otherBodyVector, myBodyVectors, myHead, player):
 
 
     if player == 'p1':
-        p1MyBodies.append(myBody.tolist())
-        p1OtherBodies.append(otherBody.tolist())
+        p1MyBodies.append(myBody[::4,::4].tolist())
+        p1OtherBodies.append(otherBody[::4,::4].tolist())
         p1Actions.append(action)
         p1MyHeads.append([myHead.x/100, myHead.y/100])
     elif player == 'p2':
-        p2MyBodies.append(myBody.tolist())
-        p2OtherBodies.append(otherBody.tolist())
+        p2MyBodies.append(myBody[::4,::4].tolist())
+        p2OtherBodies.append(otherBody[::4,::4].tolist())
         p2Actions.append(action)
         p2MyHeads.append([myHead.x/100, myHead.y/100])
 

@@ -118,7 +118,7 @@ with tf.Session() as sess:
     batch_size = 6300
 
     food = tf.placeholder(
-        shape=[None, 200, 200],
+        shape=[None, 50, 50],
         dtype=tf.float32,
         name="food")
 
