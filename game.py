@@ -114,10 +114,10 @@ def draw():
 
     if not inside(p1head) or p1head in p2body:
         print('Player blue wins! ' + str(len(p2body)))
-        r.set("sample1", json.dumps(
+        r.rpush("sample", json.dumps(
             {"myBody": p1MyBodies, "otherBody": p1OtherBodies, "action": p1Actions, "myHead": p1MyHeads,
              "winner": False}))
-        r.set("sample2", json.dumps(
+        r.rpush("sample", json.dumps(
             {"myBody": p2MyBodies, "otherBody": p2OtherBodies, "action": p2Actions, "myHead": p2MyHeads,
              "winner": True}))
 
@@ -126,10 +126,10 @@ def draw():
 
     if not inside(p2head) or p2head in p1body:
         print('Player red wins! ' + str(len(p1body)))
-        r.set("sample1", json.dumps(
+        r.rpush("sample", json.dumps(
             {"myBody": p1MyBodies, "otherBody": p1OtherBodies, "action": p1Actions, "myHead": p1MyHeads,
              "winner": True}))
-        r.set("sample2", json.dumps(
+        r.rpush("sample", json.dumps(
             {"myBody": p2MyBodies, "otherBody": p2OtherBodies, "action": p2Actions, "myHead": p2MyHeads,
              "winner": False}))
         exit()

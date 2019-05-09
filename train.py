@@ -232,12 +232,9 @@ with tf.Session() as sess:
             next_individual_values_train = np.array(json.loads(stored_next_individual_values_train))
 
         '''
-        new_data = r.get('sample1')
-        r.delete("sample1")
 
-        if not new_data:
-            new_data = r.get('sample2')
-            r.delete("sample2")
+        new_data = r.lpop('sample')
+
         if new_data:
             data = json.loads(new_data.decode('utf-8'))
             #print(r.get('data'))
@@ -247,46 +244,26 @@ with tf.Session() as sess:
                 print("Got empty dataset :s ")
                 continue
 
+            next_x_train = next_x_train + data['otherBody'][1:]
 
-
-            if len(next_x_train) > 0:
-                next_x_train = np.concatenate([next_x_train, np.array(data['otherBody'])[1:]])
-            else:
-                next_x_train = np.array(data['otherBody'])[1:]
-
-            if len(x_train) > 0:
-                x_train = np.concatenate([x_train, np.array(data['otherBody'][0:-1])])
-            else:
-                x_train = np.array(data['otherBody'])[0:-1]
-
+            x_train = x_train + data['otherBody'][0:-1]
 
             score = None
             if data['winner']:
                 score = np.ones(len(data['action'])-1)
             else:
                 score = np.zeros(len(data['action'])-1)
+
             if len(reward_train) > 0:
                 reward_train = np.concatenate([reward_train, np.expand_dims(score, axis=1)])
             else:
                 reward_train = np.expand_dims(score, axis=1)
 
-            if len(actions_train) > 0:
-                actions_train = np.concatenate([actions_train, np.array((data['action'])[0:-1])])
-            else:
-                actions_train = np.array((data['action'])[0:-1])
+            actions_train = actions_train + data['action'][0:-1]
 
+            individual_values_train = individual_values_train + data['myHead'][0:-1]
 
-            if len(individual_values_train) > 0:
-                individual_values_train = np.concatenate([individual_values_train, np.array(data['myHead'])[0:-1]])
-            else:
-                individual_values_train = np.array(data['myHead'])[0:-1]
-
-
-            if len(next_individual_values_train) > 0:
-                next_individual_values_train = np.concatenate([next_individual_values_train, np.array(data['myHead'])[1:]])
-            else:
-                next_individual_values_train = np.array(data['myHead'])[1:]
-
+            next_individual_values_train = next_individual_values_train + data['myHead'][1:]
 
 
 
@@ -304,6 +281,13 @@ with tf.Session() as sess:
         if step > len(x_train):
             time.sleep(0.1)
             continue
+
+        x_train = np.array(x_train)
+        reward_train = np.array(reward_train)
+        actions_train = np.array(actions_train)
+        individual_values_train = np.array(individual_values_train)
+        next_x_train = np.array(next_x_train)
+        next_individual_values_train = np.array(next_individual_values_train)
 
         shuffle_in_unison(next_x_train, next_individual_values_train, x_train, individual_values_train, reward_train, actions_train)
 
