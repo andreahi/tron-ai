@@ -276,7 +276,7 @@ with tf.Session() as sess:
 
         print("dataset size: ", len(x_train))
 
-        step = 10000
+        step = 100000
 
         if step > len(x_train):
             time.sleep(0.1)
@@ -291,7 +291,7 @@ with tf.Session() as sess:
 
         shuffle_in_unison(next_x_train, next_individual_values_train, x_train, individual_values_train, reward_train, actions_train)
 
-        for _ in range(20):
+        for _ in range(200):
             for i in range(0, 100000, step):
                 if i + step > len(x_train):
                     break
