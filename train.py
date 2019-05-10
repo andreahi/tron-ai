@@ -248,11 +248,8 @@ with tf.Session() as sess:
 
             x_train = x_train + data['otherBody'][0:-1]
 
-            score = None
-            if data['winner']:
-                score = np.ones(len(data['action'])-1)
-            else:
-                score = np.zeros(len(data['action'])-1)
+
+            score = np.ones(len(data['action'])-1) * (len(data['action'])/100.0)
 
             if len(reward_train) > 0:
                 reward_train = np.concatenate([reward_train, np.expand_dims(score, axis=1)])
