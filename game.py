@@ -113,7 +113,7 @@ def draw():
     p2head = p2xy.copy()
 
     if not inside(p1head) or p1head in p2body:
-        print('Player blue wins! ' + str(len(p2body)))
+        print('Player blue wins! r:' + str(len(p1body)) + ' b' + str(len(p2body)))
         r.rpush("sample", json.dumps(
             {"myBody": p1MyBodies, "otherBody": p1OtherBodies, "action": p1Actions, "myHead": p1MyHeads,
              "winner": False}))
@@ -125,7 +125,7 @@ def draw():
         return
 
     if not inside(p2head) or p2head in p1body:
-        print('Player red wins! ' + str(len(p1body)))
+        print('Player red wins! r:' + str(len(p1body)) + ' b' + str(len(p2body)))
         r.rpush("sample", json.dumps(
             {"myBody": p1MyBodies, "otherBody": p1OtherBodies, "action": p1Actions, "myHead": p1MyHeads,
              "winner": True}))
@@ -160,6 +160,5 @@ if use_graphics:
     tracer(False)
     listen()
 
-p2xy.move(p2aim)
 draw()
 done()
