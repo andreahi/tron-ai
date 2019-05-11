@@ -160,5 +160,6 @@ if use_graphics:
     tracer(False)
     listen()
 
+p2xy.move(p2aim)
 draw()
 done()
