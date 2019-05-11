@@ -109,7 +109,7 @@ def draw():
     p1xy.move(p1aim)
     p1head = p1xy.copy()
 
-    p2xy.move(p2aim)
+    #p2xy.move(p2aim)
     p2head = p2xy.copy()
 
     if not inside(p1head) or p1head in p2body:
@@ -117,9 +117,9 @@ def draw():
         r.rpush("sample", json.dumps(
             {"myBody": p1MyBodies, "otherBody": p1OtherBodies, "action": p1Actions, "myHead": p1MyHeads,
              "winner": False}))
-        r.rpush("sample", json.dumps(
-            {"myBody": p2MyBodies, "otherBody": p2OtherBodies, "action": p2Actions, "myHead": p2MyHeads,
-             "winner": True}))
+        #r.rpush("sample", json.dumps(
+        #    {"myBody": p2MyBodies, "otherBody": p2OtherBodies, "action": p2Actions, "myHead": p2MyHeads,
+        #     "winner": True}))
 
         exit()
         return
@@ -129,9 +129,9 @@ def draw():
         r.rpush("sample", json.dumps(
             {"myBody": p1MyBodies, "otherBody": p1OtherBodies, "action": p1Actions, "myHead": p1MyHeads,
              "winner": True}))
-        r.rpush("sample", json.dumps(
-            {"myBody": p2MyBodies, "otherBody": p2OtherBodies, "action": p2Actions, "myHead": p2MyHeads,
-             "winner": False}))
+        #r.rpush("sample", json.dumps(
+        #    {"myBody": p2MyBodies, "otherBody": p2OtherBodies, "action": p2Actions, "myHead": p2MyHeads,
+        #     "winner": False}))
         exit()
         return
 
