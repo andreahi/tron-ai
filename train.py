@@ -314,7 +314,7 @@ with tf.Session() as sess:
 
         shuffle_in_unison(next_x_train, next_individual_values_train, x_train, individual_values_train, reward_train, actions_train)
 
-        for _ in range(2):
+        for _ in range(20):
             for i in range(0, 100000, step):
                 if i + step > len(x_train):
                     break
