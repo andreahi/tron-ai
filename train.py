@@ -370,6 +370,7 @@ with tf.Session() as sess:
                     [train_op, cost, weighted_action_loss],
                     feed_dict={food: x_train[i:i+step], individual_values:individual_values_train[i:i+step], reward: reward_train[i:i+step], actions_performed: actions_train[i:i+step],
                                actions_target: actions_target_train, next_pred_reward: next_y_pred_v,
+                               reward_error: y_error_pred_v, next_reward_error: next_y_error_pred_v,
                                keep_prob: 0.99})
 
                 print("cost_train: " + str(cost_train) + " reward_loss_v: " + str(reward_loss_v) +  " reward_error_loss_v: " + str(reward_error_loss_v) + " weighted_action_loss_v: " + str(weighted_action_loss_v))
