@@ -82,7 +82,21 @@ def forward_pass(x, single_value_inputs, keep_prob):
 
         layer_y_0 = build_layer(build_layer(tf.concat([nn1, nn2], axis=1), 10, keep_prob, dropout=False), 5, keep_prob, dropout=False)
 
-        y_0 = tf.layers.dense(layer_y_0, 1, kernel_initializer=tf.random_uniform_initializer(-init_s, init_s))
+        reward_error_pred = tf.layers.dense(layer_y_0, 1, kernel_initializer=tf.random_uniform_initializer(-init_s, init_s))
+        
+        nn1 = tf.concat([tf.layers.flatten(x)], axis=1)
+        for num_units in [40, 20, 10]:
+            if num_units > 0:
+                nn1 = build_layer(nn1, num_units, keep_prob, dropout=False)
+
+        nn2 = tf.concat([individual_values], axis=1)
+        for num_units in [10, 8, 7, 6]:
+            if num_units > 0:
+                nn2 = build_layer(nn2, num_units, keep_prob, dropout=False)
+
+        layer_y_0 = build_layer(build_layer(tf.concat([nn1, nn2], axis=1), 10, keep_prob, dropout=False), 5, keep_prob, dropout=False)
+
+        reward_pred = tf.layers.dense(layer_y_0, 1, kernel_initializer=tf.random_uniform_initializer(-init_s, init_s))
 
 
         nn1 = tf.concat([tf.layers.flatten(x)], axis=1)
@@ -97,18 +111,18 @@ def forward_pass(x, single_value_inputs, keep_prob):
 
         layer_y_1 = build_layer(build_layer(tf.concat([nn1, nn2], axis=1), 10, keep_prob, dropout=False), 5, keep_prob, dropout=False)
 
-        y_1 = None
+        action_pred = None
         for _ in range(5):
             dense = layer_y_1
             for num_units in [10, 5]:
                 dense = build_layer(dense, num_units, keep_prob, dropout=False)
-            if y_1 != None:
-                y_1 = tf.concat([y_1, [build_layer(dense, 1, keep_prob, dropout=False)]], axis=2)
+            if action_pred != None:
+                action_pred = tf.concat([action_pred, [build_layer(dense, 1, keep_prob, dropout=False)]], axis=2)
             else:
-                y_1 = [build_layer(dense, 1, keep_prob, dropout=False)]
+                action_pred = [build_layer(dense, 1, keep_prob, dropout=False)]
 
 
-    return addNameToTensor(y_0, "reward_pred"), addNameToTensor(y_1, "action_pred")
+    return addNameToTensor(reward_pred, "reward_pred"), addNameToTensor(action_pred, "action_pred"), addNameToTensor(reward_error_pred, "reward_error_pred")
 
 
 num_actions = 5
@@ -129,6 +143,14 @@ with tf.Session() as sess:
 
     # reward vector
     reward = tf.placeholder(
+        shape=[None, 1],
+        dtype=tf.float32,
+        name="target")
+    reward_error = tf.placeholder(
+        shape=[None, 1],
+        dtype=tf.float32,
+        name="target")
+    next_reward_error = tf.placeholder(
         shape=[None, 1],
         dtype=tf.float32,
         name="target")
@@ -162,29 +184,33 @@ with tf.Session() as sess:
 
     keep_prob = tf.placeholder_with_default(1.0, shape=(), name="keep_prob")
 
-    reward_pred, action_pred = forward_pass(food, individual_values, keep_prob)
+    reward_pred, action_pred, reward_error_pred = forward_pass(food, individual_values, keep_prob)
 
 
     loss = tf.abs(action_pred - actions_target)
     print("shape loss: ", str(loss.get_shape()))
-    expected_diff = tf.stop_gradient(tf.abs(reward_pred - next_pred_reward))
+    expected_diff = tf.stop_gradient(tf.divide(tf.abs(reward_pred - next_pred_reward), reward_error + next_reward_error))
     loss_action = tf.multiply(actions_performed, loss)
     #loss = tf.Print(loss_action, [loss_action])
     weighted_action_loss = tf.reduce_sum(tf.multiply(expected_diff, loss_action))
     #weighted_loss = loss
 
-    reward_loss = tf.reduce_sum(tf.abs(reward_pred - reward))
+    reward_diff = tf.abs(reward_pred - reward)
+    reward_loss = tf.reduce_sum(reward_diff)
+
+    reward_error_loss = tf.reduce_sum(tf.abs(reward_diff - reward_error_pred))
 
     cost = (weighted_action_loss / batch_size)
 
-    cost_reward = (reward_loss / batch_size)
 
 
     optimizer = tf.train.AdamOptimizer(0.0001)
     optimizer_reward = tf.train.AdamOptimizer(0.0001)
+    optimizer_reward_error = tf.train.AdamOptimizer(0.0001)
 
     train_op = optimizer.minimize(loss)
     train_op_reward = optimizer_reward.minimize(reward_loss)
+    train_op_reward_error = optimizer_reward.minimize(reward_error_loss)
 
     init = tf.global_variables_initializer()
 
@@ -298,6 +324,15 @@ with tf.Session() as sess:
                     feed_dict={food: x_train[i:i+step], individual_values:individual_values_train[i:i+step], reward: reward_train[i:i+step],
                                keep_prob: 0.99})
 
+                _, reward_error_loss_v = sess.run(
+                    [train_op_reward_error, reward_error_loss],
+                    feed_dict={food: x_train[i:i+step], individual_values:individual_values_train[i:i+step], reward: reward_train[i:i+step],
+                               keep_prob: 0.99})
+
+                y_error_pred_v = sess.run(
+                    [reward_error_pred],
+                    feed_dict={food: x_train[i:i+step], individual_values:individual_values_train[i:i+step], keep_prob: 1.0})[0]
+
                 y_pred_v = sess.run(
                     [reward_pred],
                     feed_dict={food: x_train[i:i+step], individual_values:individual_values_train[i:i+step], keep_prob: 1.0})[0]
@@ -305,6 +340,10 @@ with tf.Session() as sess:
 
                 next_y_pred_v = sess.run(
                     [reward_pred],
+                    feed_dict={food: next_x_train[i:i+step], individual_values:next_individual_values_train[i:i+step], keep_prob: 1.0})[0]
+
+                next_y_error_pred_v = sess.run(
+                    [reward_error_pred],
                     feed_dict={food: next_x_train[i:i+step], individual_values:next_individual_values_train[i:i+step], keep_prob: 1.0})[0]
 
 
@@ -333,7 +372,7 @@ with tf.Session() as sess:
                                actions_target: actions_target_train, next_pred_reward: next_y_pred_v,
                                keep_prob: 0.99})
 
-                print("cost_train: " + str(cost_train) + " reward_loss_v: " + str(reward_loss_v) + " weighted_action_loss_v: " + str(weighted_action_loss_v))
+                print("cost_train: " + str(cost_train) + " reward_loss_v: " + str(reward_loss_v) +  " reward_error_loss_v: " + str(reward_error_loss_v) + " weighted_action_loss_v: " + str(weighted_action_loss_v))
 
         shutil.rmtree('model', ignore_errors=True)
 
