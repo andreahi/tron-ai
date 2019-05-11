@@ -16,7 +16,7 @@ p2xy = vector(100, 0)
 p2aim = vector(-4, 0)
 p2body = set()
 
-r = redis.Redis(host='localhost', port=6379, db=0)
+r = redis.Redis(host='in.space', port=6379, db=0)
 
 
 def do_random_action(paim):
@@ -57,7 +57,7 @@ def do_smart_action(paim, otherBodyVector, myBodyVectors, myHead, player):
 
 
     randint = str(random.randint(0, 100000000))
-    r.set(randint, json.dumps({"myHead": [myHead.x/100, myHead.y/100],"otherBody": otherBody[::4,::4].tolist()}))
+    r.set(randint, json.dumps({"myHead": [myHead.x/100, myHead.y/100],"otherBody": myBody[::4,::4].tolist()}))
     r.rpush("jobs", randint)
     rand_action = None
     while rand_action is None:
@@ -75,12 +75,12 @@ def do_smart_action(paim, otherBodyVector, myBodyVectors, myHead, player):
 
     if player == 'p1':
         p1MyBodies.append(myBody[::4,::4].tolist())
-        p1OtherBodies.append(otherBody[::4,::4].tolist())
+        p1OtherBodies.append(myBody[::4,::4].tolist())
         p1Actions.append(action)
         p1MyHeads.append([myHead.x/100, myHead.y/100])
     elif player == 'p2':
         p2MyBodies.append(myBody[::4,::4].tolist())
-        p2OtherBodies.append(otherBody[::4,::4].tolist())
+        p2OtherBodies.append(myBody[::4,::4].tolist())
         p2Actions.append(action)
         p2MyHeads.append([myHead.x/100, myHead.y/100])
 
@@ -112,7 +112,7 @@ def draw():
     #p2xy.move(p2aim)
     p2head = p2xy.copy()
 
-    if not inside(p1head) or p1head in p2body:
+    if not inside(p1head) or p1head in p2body or p1head in p1body:
         print('Player blue wins! r:' + str(len(p1body)) + ' b' + str(len(p2body)))
         r.rpush("sample", json.dumps(
             {"myBody": p1MyBodies, "otherBody": p1OtherBodies, "action": p1Actions, "myHead": p1MyHeads,
@@ -124,16 +124,7 @@ def draw():
         exit()
         return
 
-    if not inside(p2head) or p2head in p1body:
-        print('Player red wins! r:' + str(len(p1body)) + ' b' + str(len(p2body)))
-        r.rpush("sample", json.dumps(
-            {"myBody": p1MyBodies, "otherBody": p1OtherBodies, "action": p1Actions, "myHead": p1MyHeads,
-             "winner": True}))
-        #r.rpush("sample", json.dumps(
-        #    {"myBody": p2MyBodies, "otherBody": p2OtherBodies, "action": p2Actions, "myHead": p2MyHeads,
-        #     "winner": False}))
-        exit()
-        return
+
 
     p1body.add(p1head)
     p2body.add(p2head)

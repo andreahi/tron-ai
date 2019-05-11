@@ -55,7 +55,7 @@ while True:
                 #print(actions)
                 #print(reward_pred)
                 actions = actions.tolist()
-                if random.randint(0, 100) > 80:
+                if random.randint(0, 100) > 99:
                     actions = [random.randint(0, 10), random.randint(0, 10), random.randint(0, 10), random.randint(0, 10), random.randint(0, 10)]
             else:
                 actions = [random.randint(0, 10), random.randint(0, 10), random.randint(0, 10), random.randint(0, 10), random.randint(0, 10)]
