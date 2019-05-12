@@ -314,6 +314,25 @@ with tf.Session() as sess:
 
         shuffle_in_unison(next_x_train, next_individual_values_train, x_train, individual_values_train, reward_train, actions_train)
 
+
+        for _ in range(20):
+            for i in range(0, 100000, step):
+                if i + step > len(x_train):
+                    break
+
+                _, reward_loss_v = sess.run(
+                    [train_op_reward, reward_loss],
+                    feed_dict={food: x_train[i:i+step], individual_values:individual_values_train[i:i+step], reward: reward_train[i:i+step],
+                               keep_prob: 0.99})
+
+                _, reward_error_loss_v = sess.run(
+                    [train_op_reward_error, reward_error_loss],
+                    feed_dict={food: x_train[i:i+step], individual_values:individual_values_train[i:i+step], reward: reward_train[i:i+step],
+                               keep_prob: 0.99})
+
+
+                print(" reward_loss_v: " + str(reward_loss_v) +  " reward_error_loss_v: " + str(reward_error_loss_v))
+
         for _ in range(20):
             for i in range(0, 100000, step):
                 if i + step > len(x_train):
@@ -368,23 +387,6 @@ with tf.Session() as sess:
 
 
 
-        for _ in range(20):
-            for i in range(0, 100000, step):
-                if i + step > len(x_train):
-                    break
-
-                _, reward_loss_v = sess.run(
-                    [train_op_reward, reward_loss],
-                    feed_dict={food: x_train[i:i+step], individual_values:individual_values_train[i:i+step], reward: reward_train[i:i+step],
-                               keep_prob: 0.99})
-
-                _, reward_error_loss_v = sess.run(
-                    [train_op_reward_error, reward_error_loss],
-                    feed_dict={food: x_train[i:i+step], individual_values:individual_values_train[i:i+step], reward: reward_train[i:i+step],
-                               keep_prob: 0.99})
-
-
-                print(" reward_loss_v: " + str(reward_loss_v) +  " reward_error_loss_v: " + str(reward_error_loss_v))
 
         shutil.rmtree('model', ignore_errors=True)
 
