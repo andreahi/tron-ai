@@ -204,7 +204,7 @@ with tf.Session() as sess:
 
 
 
-    optimizer = tf.train.AdamOptimizer(0.00001)
+    optimizer = tf.train.AdamOptimizer(0.0001)
     optimizer_reward = tf.train.AdamOptimizer(0.0001)
     optimizer_reward_error = tf.train.AdamOptimizer(0.0001)
 
