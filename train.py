@@ -304,7 +304,7 @@ with tf.Session() as sess:
 
         print("dataset size: ", len(x_train))
 
-        step = 1000
+        step = 10000
 
         if step > len(x_train):
             time.sleep(0.1)
