@@ -61,10 +61,10 @@ def build_layer(x, num_units, keep_prob, layer_n = False, dropout = False):
         weights_initializer=tf.random_uniform_initializer(-init_s, init_s)
     )
 
-    #nn = tf.keras.layers.Dense(num_units,
-    #                           activation=tf.nn.leaky_relu,
-    #                           activity_regularizer=regularizers.l1(0.01)
-    #                           )(x)
+    nn = tf.keras.layers.Dense(num_units,
+                               activation=tf.nn.leaky_relu,
+                               activity_regularizer=regularizers.l1(0.01)
+                               )(x)
     if dropout:
         nn = tf.nn.dropout(nn, keep_prob)
 
