@@ -10,6 +10,7 @@ import time
 import tensorflow as tf
 import redis
 import numpy as np
+from keras import regularizers
 from tensorflow.python.saved_model.simple_save import simple_save
 
 r = redis.Redis(host='localhost', port=6379, db=0)
@@ -60,6 +61,10 @@ def build_layer(x, num_units, keep_prob, layer_n = False, dropout = False):
         weights_initializer=tf.random_uniform_initializer(-init_s, init_s)
     )
 
+    #nn = tf.keras.layers.Dense(num_units,
+    #                           activation=tf.nn.leaky_relu,
+    #                           activity_regularizer=regularizers.l1(0.01)
+    #                           )(x)
     if dropout:
         nn = tf.nn.dropout(nn, keep_prob)
 
@@ -299,7 +304,7 @@ with tf.Session() as sess:
 
         print("dataset size: ", len(x_train))
 
-        step = 10000
+        step = 1000
 
         if step > len(x_train):
             time.sleep(0.1)
