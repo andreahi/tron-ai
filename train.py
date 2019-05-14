@@ -71,12 +71,12 @@ def forward_pass(x, single_value_inputs, keep_prob):
 
     with tf.variable_scope("model_weighted", reuse=tf.AUTO_REUSE):
         nn1 = tf.concat([tf.layers.flatten(x)], axis=1)
-        for num_units in [40, 20, 10]:
+        for num_units in [5, 5, 5]:
             if num_units > 0:
                 nn1 = build_layer(nn1, num_units, keep_prob, dropout=False)
 
         nn2 = tf.concat([individual_values], axis=1)
-        for num_units in [10, 8, 7, 6]:
+        for num_units in [5, 5, 5]:
             if num_units > 0:
                 nn2 = build_layer(nn2, num_units, keep_prob, dropout=False)
 
@@ -85,12 +85,12 @@ def forward_pass(x, single_value_inputs, keep_prob):
         reward_error_pred = tf.layers.dense(layer_y_0, 1, kernel_initializer=tf.random_uniform_initializer(-init_s, init_s))
         
         nn1 = tf.concat([tf.layers.flatten(x)], axis=1)
-        for num_units in [40, 20, 10]:
+        for num_units in [5, 5, 5]:
             if num_units > 0:
                 nn1 = build_layer(nn1, num_units, keep_prob, dropout=False)
 
         nn2 = tf.concat([individual_values], axis=1)
-        for num_units in [10, 8, 7, 6]:
+        for num_units in [5, 5, 5]:
             if num_units > 0:
                 nn2 = build_layer(nn2, num_units, keep_prob, dropout=False)
 
@@ -100,12 +100,12 @@ def forward_pass(x, single_value_inputs, keep_prob):
 
 
         nn1 = tf.concat([tf.layers.flatten(x)], axis=1)
-        for num_units in [40, 20, 10]:
+        for num_units in [5, 5, 5]:
             if num_units > 0:
                 nn1 = build_layer(nn1, num_units, keep_prob, dropout=False)
 
         nn2 = tf.concat([individual_values], axis=1)
-        for num_units in [10, 8, 7, 6]:
+        for num_units in [5, 5, 5]:
             if num_units > 0:
                 nn2 = build_layer(nn2, num_units, keep_prob, dropout=False)
 
@@ -114,7 +114,7 @@ def forward_pass(x, single_value_inputs, keep_prob):
         action_pred = None
         for _ in range(5):
             dense = layer_y_1
-            for num_units in [10, 5]:
+            for num_units in [5, 5]:
                 dense = build_layer(dense, num_units, keep_prob, dropout=False)
             if action_pred != None:
                 action_pred = tf.concat([action_pred, [build_layer(dense, 1, keep_prob, dropout=False)]], axis=2)
