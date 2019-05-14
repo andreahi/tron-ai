@@ -338,7 +338,7 @@ with tf.Session() as sess:
 
                 print(" reward_loss_v: " + str(reward_loss_v) +  " reward_error_loss_v: " + str(reward_error_loss_v))
 
-        for _ in range(20):
+        for _ in range(100):
             for i in range(0, 100000, step):
                 if i + step > len(x_train):
                     break
